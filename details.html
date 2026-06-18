@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-container">
+            <img src="assets/world.png" alt="World Logo" class="logo">
+            <h1>Country Explorer</h1>
+        </div>
+    </header>
+
+    <main id="details-container">
+        
+        <div class="nav-bar">
+            <button id="back-btn">Back</button>
+        </div>
+
+        <section class="details-card-wrapper">
+            
+            <div class="details-flag-container">
+                <img id="detail-flag" src="" alt="Country Flag">
+            </div>
+
+            <div class="details-content-container">
+                <h2 id="detail-name">Loading Country...</h2>
+                
+                <div class="details-grid-info">
+                    <p><strong>Population:</strong> <span id="detail-population"></span></p>
+                    <p><strong>Region:</strong> <span id="detail-region"></span></p>
+                    <p><strong>Sub Region:</strong> <span id="detail-subregion"></span></p>
+                    <p><strong>Capital:</strong> <span id="detail-capital"></span></p>
+                    <p><strong>Currencies:</strong> <span id="detail-currencies"></span></p>
+                    <p><strong>Languages:</strong> <span id="detail-languages"></span></p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="details.js"></script>
+</body>
+</html>
