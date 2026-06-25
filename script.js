@@ -149,8 +149,27 @@ function populateCountryCards(countriesArray, limit) {
             card.classList.add('country-card');
 
             const flagImg = document.createElement('img');
-            flagImg.src = country.flags.png; 
-            flagImg.alt = `Flag of ${country.name.common}`; 
+            // Try to use the flag from data.js or REST API
+            let flagUrl = country.flags && country.flags.png ? country.flags.png : null;
+            
+            // If the URL is a local path, convert it to flagcdn.com CDN URL
+            if (!flagUrl || flagUrl.startsWith('./assets')) {
+                // Extract country code from common name or use flagcdn fallback
+                const countryCode = country.flags && country.flags.code ? country.flags.code : null;
+                if (countryCode) {
+                    flagUrl = `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
+                } else {
+                    // Use a placeholder when we can't determine the flag
+                    flagUrl = '/assets/world.png';
+                }
+            }
+            
+            flagImg.src = flagUrl;
+            flagImg.alt = `Flag of ${country.name.common}`;
+            // Add onerror handler to fall back to world.png if image fails to load
+            flagImg.onerror = function() {
+                this.src = '/assets/world.png';
+            }; 
 
             const cardContent = document.createElement('div');
             cardContent.classList.add('card-content');
