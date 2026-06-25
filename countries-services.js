@@ -7,15 +7,15 @@ console.log('countries-services loaded from', __filename);
 
 function loadData() {
   const filePath = path.join(__dirname, 'data.js');
-  const content = fs.readFileSync(filePath, 'utf8');
-
-  // Run the data.js in a sandbox to obtain the `data` variable it defines
-  const sandbox = {};
-  vm.createContext(sandbox);
   try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    // Run the data.js in a sandbox to obtain the `data` variable it defines
+    const sandbox = {};
+    vm.createContext(sandbox);
     vm.runInContext(content + '\nresult = data;', sandbox, { filename: 'data.js' });
     return sandbox.result || [];
   } catch (err) {
+    console.warn('loadData: unable to read or execute data.js:', err.message);
     return [];
   }
 }
@@ -25,12 +25,14 @@ function getAllCountries() {
 }
 
 function fetchCountries() {
+  console.log('fetchCountries() called');
   const endpoints = [
-    'https://restcountries.com/v3.1/all?fields=name,capital,flags,currencies,languages,region,subregion,population',
-    'https://restcountries.com/v2/all?fields=name,capital,flags,currencies,languages,region,subregion,population',
+    'https://restcountries.com/v3.1/all',
+    'https://restcountries.com/v5.1/all',
   ];
 
   function fetchFromUrl(url, redirectsLeft) {
+    console.log('fetchFromUrl() called with url:', url);
     return new Promise((resolve) => {
       try {
         const options = new URL(url);
