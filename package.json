@@ -1,0 +1,11 @@
+{
+  "name": "country_explorer_api",
+  "version": "1.0.0",
+  "description": "Country Explorer Node.js Application (backend in original folder)",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js -e ejs,js,css,html,jpg,png,scss"
+  },
+  "author": "",
+  "license": "ISC"
+}

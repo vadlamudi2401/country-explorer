@@ -29,6 +29,76 @@ function getFormattedNames(dataArray) {
     return names.join(", ");
 }
 
+function getFormattedCurrencies(currencies) {
+    if (!currencies) {
+        return "N/A";
+    }
+
+    if (Array.isArray(currencies)) {
+        const names = currencies
+            .filter(currency => currency && currency.name)
+            .map(currency => currency.name);
+
+        return names.length > 0 ? names.join(", ") : "N/A";
+    }
+
+    if (typeof currencies === 'object') {
+        const currencyCodes = Object.keys(currencies);
+        const names = currencyCodes.reduce((result, code) => {
+            const curr = currencies[code];
+            if (curr && curr.name) {
+                result.push(curr.name);
+            }
+            return result;
+        }, []);
+        return names.length > 0 ? names.join(", ") : "N/A";
+    }
+
+    return "N/A";
+}
+
+function getFormattedLanguages(languages) {
+    if (!languages) {
+        return "N/A";
+    }
+
+    if (Array.isArray(languages)) {
+        const names = languages
+            .filter(lang => lang && typeof lang.name === 'string')
+            .map(lang => lang.name);
+
+        return names.length > 0 ? names.join(", ") : "N/A";
+    }
+
+    if (typeof languages === 'object') {
+        const languageCodes = Object.keys(languages);
+        const names = languageCodes.reduce((result, code) => {
+            const value = languages[code];
+            if (typeof value === 'string') {
+                result.push(value);
+            }
+            return result;
+        }, []);
+        return names.length > 0 ? names.join(", ") : "N/A";
+    }
+
+    return "N/A";
+}
+
+function fetchData() {
+    return fetch('/countries')
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('HTTP error! Status: ' + response.status);
+            }
+            return response.json();
+        })
+        .catch(function (error) {
+            console.error('Error fetching countries data', error);
+            throw error;
+        });
+}
+
 /**
  * STAGE 2: Implement countryCardHandler()
  * Handles clicking a country card by formatting its data into a safe query string
@@ -43,15 +113,15 @@ function countryCardHandler(country) {
         "&population=" +
         country.population +
         "&region=" +
-        country.region +
+        encodeURIComponent(country.region) +
         "&subRegion=" +
         encodeURIComponent(country.subregion) +
         "&capital=" +
         encodeURIComponent(country.capital) +
         "&currencies=" +
-        encodeURIComponent(getFormattedNames(country.currencies)) + 
+        encodeURIComponent(getFormattedCurrencies(country.currencies)) + 
         "&languages=" +
-        encodeURIComponent(getFormattedNames(country.languages));   
+        encodeURIComponent(getFormattedLanguages(country.languages));   
 
     window.location.href = "details.html" + queryString;
 }
@@ -185,10 +255,13 @@ showMoreBtn.addEventListener('click', () => {
 
 // Load event initialization
 document.addEventListener("DOMContentLoaded", () => {
-    if (typeof data !== 'undefined') {
-        countries = data; 
-        populateCountryCards(countries, displayCount);
-    } else {
-        console.error("Data array tracking structure broken: Check source parameters.");
-    }
+    fetchData()
+        .then(function (data) {
+            countries = data;
+            populateCountryCards(countries, displayCount);
+        })
+        .catch(function (error) {
+            populateCustomErrorMessage('Unable to load country data. Please try again later.');
+            console.error('Failed to load countries:', error);
+        });
 });
